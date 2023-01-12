@@ -8,14 +8,10 @@ class Game:
 	def __init__(self):
 
 		# game attributes
-		self.max_level = 2
+		self.max_level = 2 # we set the number of available levels at 0
 		self.max_health = 100
 		self.cur_health = 100
 		self.coins = 0
-		
-		# audio 
-		#self.level_bg_music = pygame.mixer.Sound('../audio/level_music.wav')
-		#self.overworld_bg_music = pygame.mixer.Sound('../audio/overworld_music.wav')
 
 		# overworld creation
 		self.overworld = Overworld(0,self.max_level,screen,self.create_level)
@@ -40,20 +36,20 @@ class Game:
 		#self.overworld_bg_music.play(loops = -1)
 		#self.level_bg_music.stop()
 
-	def change_coins(self,amount):
+	def change_coins(self,amount): # mathod that affects coins by an amount ( method to be called in the level (create_lvl) )
 		self.coins += amount
 
 	def change_health(self,amount):
 		self.cur_health += amount
 
-	def check_game_over(self):
+	def check_game_over(self): # a method to stop the game upon player death and resets everything ( gets us also back to the overworld )
 		if self.cur_health <= 0:
 			self.cur_health = 100
 			self.coins = 0
 			self.max_level = 0
 			self.overworld = Overworld(0,self.max_level,screen,self.create_level)
 			self.status = 'overworld'
-			self.level_bg_music.stop()
+			#self.level_bg_music.stop()
 			#self.overworld_bg_music.play(loops = -1)
 
 	def run(self):

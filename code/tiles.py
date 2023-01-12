@@ -29,7 +29,7 @@ class AnimatedTile(Tile):
 		self.image = self.frames[self.frame_index]
 
 	def animate(self):
-		self.frame_index += 0.15
+		self.frame_index += 0.15 # this is the animation speed
 		if self.frame_index >= len(self.frames):
 			self.frame_index = 0
 		self.image = self.frames[int(self.frame_index)]
@@ -44,7 +44,7 @@ class Coin(AnimatedTile):
 		center_x = x + int(size / 2)
 		center_y = y + int(size / 2)
 		self.rect = self.image.get_rect(center = (center_x,center_y))
-		self.value = value
+		self.value = value # this value will be determined in order to differentiate between silver and gold
 
 class Palm(AnimatedTile):
 	def __init__(self,size,x,y,path,offset):

@@ -3,7 +3,7 @@ from game_data import levels
 from support import import_folder
 from decoration import Sky
 
-class Node(pygame.sprite.Sprite):
+class Node(pygame.sprite.Sprite): #first thing to make : the node , the little rect we need to press or click in order to get into our level.
 	def __init__(self,pos,status,icon_speed,path):
 		super().__init__()
 		self.frames = import_folder(path)
@@ -19,7 +19,7 @@ class Node(pygame.sprite.Sprite):
 
 	def animate(self):
 		self.frame_index += 0.15
-		if self.frame_index >= len(self.frames):
+		if self.frame_index >= len(self.frames): # same way we animated the player and the rest
 			self.frame_index = 0
 		self.image = self.frames[int(self.frame_index)]
 
@@ -52,7 +52,7 @@ class Overworld:
 
 		# movement logic
 		self.moving = False
-		self.move_direction = pygame.math.Vector2(0,0)
+		self.move_direction = pygame.math.Vector2(0,0) # again we use a vector for the
 		self.speed = 8
 
 		# sprites 
@@ -75,10 +75,10 @@ class Overworld:
 				node_sprite = Node(node_data['node_pos'],'locked',self.speed,node_data['node_graphics'])
 			self.nodes.add(node_sprite)
 
-	def draw_paths(self):
-		if self.max_level > 0:
+	def draw_paths(self): #this draws the invisible line that we considered as path
+		if self.max_level > 0: #the if statement which has the job
 			points = [node['node_pos'] for index,node in enumerate(levels.values()) if index <= self.max_level]
-			pygame.draw.lines(self.display_surface,'#a04f45',False,points,6)
+			pygame.draw.lines(self.display_surface,'#200000',False,points,6)
 
 	def setup_icon(self):
 		self.icon = pygame.sprite.GroupSingle()
@@ -88,7 +88,7 @@ class Overworld:
 	def input(self):
 		keys = pygame.key.get_pressed()
 
-		if not self.moving and self.allow_input:
+		if self.allow_input:
 			if keys[pygame.K_RIGHT] and self.current_level < self.max_level:
 				self.move_direction = self.get_movement_data('next')
 				self.current_level += 1
@@ -97,7 +97,7 @@ class Overworld:
 				self.move_direction = self.get_movement_data('previous')
 				self.current_level -= 1
 				self.moving = True
-			elif keys[pygame.K_SPACE]:
+			if keys[pygame.K_SPACE]:
 				self.create_level(self.current_level)
 
 	def get_movement_data(self,target):
