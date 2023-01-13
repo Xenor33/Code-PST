@@ -6,32 +6,31 @@ from decoration import Sky
 class Node(pygame.sprite.Sprite): #first thing to make : the node , the little rect we need to press or click in order to get into our level.
 	def __init__(self,pos,status,icon_speed,path):
 		super().__init__()
-		self.frames = import_folder(path)
+		self.frames = import_folder(path) #frames are to be imported used the import folder method we made before
 		self.frame_index = 0
-		self.image = self.frames[self.frame_index]
+		self.image = self.frames[self.frame_index] #get each picture
 		if status == 'available':
 			self.status = 'available'
 		else:
 			self.status = 'locked'
 		self.rect = self.image.get_rect(center = pos)
-
 		self.detection_zone = pygame.Rect(self.rect.centerx-(icon_speed/2),self.rect.centery-(icon_speed/2),icon_speed,icon_speed)
 
-	def animate(self):
+	def animate(self):# same way we animated the player and the rest
 		self.frame_index += 0.15
-		if self.frame_index >= len(self.frames): # same way we animated the player and the rest
+		if self.frame_index >= len(self.frames):
 			self.frame_index = 0
 		self.image = self.frames[int(self.frame_index)]
 
-	def update(self):
+	def update(self):# if the level is available we animate , sinon its a black image
 		if self.status == 'available':
 			self.animate()
 		else:
 			tint_surf = self.image.copy()
-			tint_surf.fill('black',None,pygame.BLEND_RGBA_MULT)
-			self.image.blit(tint_surf,(0,0))
+			tint_surf.fill('black',None,pygame.BLEND_RGBA_MULT) # make the black contour around the picture
+			self.image.blit(tint_surf,(0,0)) #apply it
 
-class Icon(pygame.sprite.Sprite):
+class Icon(pygame.sprite.Sprite): #this is our cursor , we wanted to use the mouse put prefered using the hat
 	def __init__(self,pos):
 		super().__init__()
 		self.pos = pos
@@ -52,7 +51,7 @@ class Overworld:
 
 		# movement logic
 		self.moving = False
-		self.move_direction = pygame.math.Vector2(0,0) # again we use a vector for the
+		self.move_direction = pygame.math.Vector2(0,0) # again we use a vector for the direction of
 		self.speed = 8
 
 		# sprites 
@@ -66,19 +65,14 @@ class Overworld:
 		self.timer_length = 300
 
 	def setup_nodes(self):
-		self.nodes = pygame.sprite.Group()
+		self.nodes = pygame.sprite.Group() # create a sprite of the nodes
 
-		for index, node_data in enumerate(levels.values()):
+		for index, node_data in enumerate(levels.values()): # loop through the index of the values to see which are available and which are not depending if they exceed the max
 			if index <= self.max_level:
 				node_sprite = Node(node_data['node_pos'],'available',self.speed,node_data['node_graphics'])
 			else:
 				node_sprite = Node(node_data['node_pos'],'locked',self.speed,node_data['node_graphics'])
 			self.nodes.add(node_sprite)
-
-	def draw_paths(self): #this draws the invisible line that we considered as path
-		if self.max_level > 0: #the if statement which has the job
-			points = [node['node_pos'] for index,node in enumerate(levels.values()) if index <= self.max_level]
-			pygame.draw.lines(self.display_surface,'#200000',False,points,6)
 
 	def setup_icon(self):
 		self.icon = pygame.sprite.GroupSingle()
@@ -132,6 +126,5 @@ class Overworld:
 		self.nodes.update()
 
 		self.sky.draw(self.display_surface)
-		self.draw_paths()
 		self.nodes.draw(self.display_surface)
 		self.icon.draw(self.display_surface)
