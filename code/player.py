@@ -3,7 +3,7 @@ from support import import_folder
 
 
 class Player(pygame.sprite.Sprite):
-	def __init__(self,pos,surface,create_jump_particles,change_health):
+	def __init__(self,pos,surface,change_health):
 		super().__init__()
 		self.import_character_assets()
 		self.frame_index = 0 # the index used to switch between animations
@@ -16,12 +16,10 @@ class Player(pygame.sprite.Sprite):
 		self.hadouken_frame_index = 0
 		self.hadouken_animation_speed = 0.15
 		self.display_surface = surface
-		# dust particles
-		self.import_dust_run_particles()
+
 		self.dust_frame_index = 0
 		self.dust_animation_speed = 0.15
 		self.display_surface = surface
-		self.create_jump_particles = create_jump_particles
 
 		# player movement
 		self.direction = pygame.math.Vector2(0,0) #in order to make player ineractions easier to code we needed to make a vector that defines the player directions ( vertical or horizontal by direction.x or .y )
@@ -57,8 +55,6 @@ class Player(pygame.sprite.Sprite):
 			full_path = character_path + animation
 			self.animations[animation] = import_folder(full_path)
 
-	def import_dust_run_particles(self):
-		self.dust_run_particles = import_folder('../graphics/character/dust_particles/run')
 
 	def import_hadouken_particles(self):
 		self.hadouken_particles = import_folder('../graphics/character/hadouken')
@@ -98,21 +94,6 @@ class Player(pygame.sprite.Sprite):
 			flipped_hadouken_particle = pygame.transform.flip(hadouken_particle, True, False)
 			self.display_surface.blit(flipped_hadouken_particle, pos)
 
-	def run_dust_animation(self):
-		if self.status == 'run' and self.on_ground:
-			self.dust_frame_index += self.dust_animation_speed
-			if self.dust_frame_index >= len(self.dust_run_particles):
-				self.dust_frame_index = 0
-
-			dust_particle = self.dust_run_particles[int(self.dust_frame_index)]
-
-			if self.facing_right:
-				pos = self.rect.bottomleft - pygame.math.Vector2(6,10)
-				self.display_surface.blit(dust_particle,pos)
-			else:
-				pos = self.rect.bottomright - pygame.math.Vector2(-6,-10)
-				flipped_dust_particle = pygame.transform.flip(dust_particle,True,False)
-				self.display_surface.blit(flipped_dust_particle,pos)
 
 	def get_input(self): # game bindings :
 		keys = pygame.key.get_pressed()
@@ -128,9 +109,8 @@ class Player(pygame.sprite.Sprite):
 
 		if keys[pygame.K_SPACE] and self.on_ground:
 			self.jump()
-			self.create_jump_particles(self.rect.midbottom)
-		if keys[pygame.K_a]:
-			self.run_hadouken_animation()
+	#	if keys[pygame.K_a]:
+	#		self.run_hadouken_animation()
 
 	def get_status(self): # change player status depending on the player vector's status
 		if self.direction.y < 0:
@@ -171,5 +151,4 @@ class Player(pygame.sprite.Sprite):
 		self.get_status()
 		self.animate()
 
-		self.run_dust_animation()
 		self.invincibility_timer()
