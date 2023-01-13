@@ -8,7 +8,7 @@ class Game:
 	def __init__(self):
 
 		# game attributes
-		self.max_level = 4 # we set the number of available levels at 0
+		self.max_level = 0 # we set the number of available levels at 0
 		self.max_health = 100
 		self.cur_health = 100
 		self.coins = 0
@@ -16,7 +16,6 @@ class Game:
 		# overworld creation
 		self.overworld = Overworld(0,self.max_level,screen,self.create_level)
 		self.status = 'overworld'
-		#self.overworld_bg_music.play(loops = -1)
 
 		# user interface 
 		self.ui = UI(screen)
@@ -53,6 +52,8 @@ class Game:
 	def run(self):
 		if self.status == 'overworld':
 			self.overworld.run()
+
+			screen.blit(text, (130, 600))
 		else:
 			self.level.run()
 			self.ui.show_health(self.cur_health,self.max_health)
@@ -64,13 +65,18 @@ pygame.init()
 screen = pygame.display.set_mode((screen_width,screen_height))
 clock = pygame.time.Clock()
 game = Game()
+pygame.display.set_caption("RedHat Adventures: JP Edition")
+font_path = "../graphics/ui/ARCADEPI.TTF"
+font = pygame.font.Font(font_path, 40)
+text = font.render(" PRESS SPACE TO CONTINUE ", True, (255, 255, 255))
+
 
 while True:
 	for event in pygame.event.get():
 		if event.type == pygame.QUIT:
 			pygame.quit()
 			sys.exit()
-	
+
 	screen.fill('grey')
 	game.run()
 
